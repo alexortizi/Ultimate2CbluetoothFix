@@ -67,7 +67,7 @@
 
 **Por qué es la tarea 1:** `origin` hoy apunta a `git@github.com:bezelye404/Ultimate2CbluetoothFix.git`, el repositorio de otra persona. Los 8 commits del historial son todos de `bezelye404 <k7arslan@proton.me>`. Si se commitea y pushea antes de arreglar los remotes, el push va al repo de un tercero.
 
-- [ ] **Step 1: [WINDOWS o macOS] Crear el fork**
+- [x] **Step 1: [WINDOWS o macOS] Crear el fork**
 
 Requiere el usuario de GitHub del usuario. Con `gh` CLI:
 
@@ -77,7 +77,7 @@ gh repo fork bezelye404/Ultimate2CbluetoothFix --remote=false --clone=false
 
 Alternativa manual: botón **Fork** en `https://github.com/bezelye404/Ultimate2CbluetoothFix`.
 
-- [ ] **Step 2: Reapuntar los remotes**
+- [x] **Step 2: Reapuntar los remotes**
 
 Reemplazar `<USUARIO>` por el usuario de GitHub real:
 
@@ -89,7 +89,7 @@ git remote -v
 
 Salida esperada: `origin` con el fork, `upstream` con `bezelye404`.
 
-- [ ] **Step 3: Verificar que nada quedó apuntando a upstream para escritura**
+- [x] **Step 3: Verificar que nada quedó apuntando a upstream para escritura**
 
 ```bash
 git config --get branch.main.remote
@@ -97,7 +97,7 @@ git config --get branch.main.remote
 
 Si devuelve `upstream`, dejarlo así a propósito: `main` sigue a upstream para poder traer cambios del autor original.
 
-- [ ] **Step 4: Publicar la rama de trabajo en el fork**
+- [x] **Step 4: Publicar la rama de trabajo en el fork**
 
 ```bash
 git push -u origin feature/tray-autostart-multipad
@@ -105,7 +105,11 @@ git push -u origin feature/tray-autostart-multipad
 
 Expected: la rama queda creada en el fork, con el commit del spec (`207abc5`).
 
-- [ ] **Step 5: Verificar el destino del push**
+**HECHO 2026-09-02:** fork en `alexortizi/Ultimate2CbluetoothFix` (owner type `User`, parent
+`bezelye404/Ultimate2CbluetoothFix`). `origin` = fork, `upstream` = bezelye404,
+`branch.main.remote` = `upstream` a propósito. Push verificado contra `origin`.
+
+- [x] **Step 5: Verificar el destino del push**
 
 ```bash
 git rev-parse --abbrev-ref feature/tray-autostart-multipad@{upstream}

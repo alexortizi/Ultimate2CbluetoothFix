@@ -9,13 +9,22 @@
     <Nullable>enable</Nullable>
     <ApplicationIcon>Assets\logo.ico</ApplicationIcon>
     <Version>0.1.0</Version>
+  </PropertyGroup>
 
-    <!-- Publish Configuration -->
+  <!-- Solo al publicar: un build normal no es self-contained, para que el proyecto
+       de tests pueda referenciar este proyecto (NETSDK1150).
+       Publicar con: dotnet publish -c Release -r win-x64 -->
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' != ''">
     <PublishSingleFile>true</PublishSingleFile>
     <SelfContained>true</SelfContained>
-    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
   </PropertyGroup>
+
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+      <_Parameter1>8bitdofixer.Tests</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
 
   <ItemGroup>
     <Resource Include="Assets\logo.ico" />
