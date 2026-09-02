@@ -133,7 +133,9 @@ Expected: `origin/feature/tray-autostart-multipad`. **Si dice `upstream/...`, pa
 
 **El problema que resuelve, y por qué no es opcional:** el csproj de la app tiene hoy `<SelfContained>true</SelfContained>` y `<RuntimeIdentifier>win-x64</RuntimeIdentifier>` en el PropertyGroup principal. Un proyecto de tests que referencie un proyecto self-contained falla con **NETSDK1150**. La corrección es que esas propiedades apliquen solo al publicar.
 
-- [ ] **Step 1: Mover las props de publish a un grupo condicional**
+**HECHO 2026-09-02 (escrito, SIN verificar: falta correr los Steps 5-7 en Windows).**
+
+- [x] **Step 1: Mover las props de publish a un grupo condicional**
 
 En `8bitdofixer.csproj`, borrar estas cuatro líneas del `<PropertyGroup>` principal:
 
@@ -164,7 +166,7 @@ y agregar, después del cierre de ese `</PropertyGroup>`:
   </ItemGroup>
 ```
 
-- [ ] **Step 2: Crear el csproj de tests**
+- [x] **Step 2: Crear el csproj de tests**
 
 `tests/8bitdofixer.Tests/8bitdofixer.Tests.csproj`:
 
@@ -192,7 +194,7 @@ y agregar, después del cierre de ese `</PropertyGroup>`:
 
 **Si el restore falla por versiones de paquete** (no pude verificarlas offline contra el SDK de .NET 10): correr `dotnet new xunit -o /tmp/probe` en Windows y copiar de ahí las versiones que el SDK genere.
 
-- [ ] **Step 3: Crear el archivo de solución**
+- [x] **Step 3: Crear el archivo de solución**
 
 `8bitdofixer.sln`:
 
@@ -226,7 +228,7 @@ EndGlobal
 
 Los tabs dentro de `GlobalSection` son obligatorios en el formato `.sln`.
 
-- [ ] **Step 4: Escribir un test de sanidad que falle por la razón correcta**
+- [x] **Step 4: Escribir un test de sanidad que falle por la razón correcta**
 
 `tests/8bitdofixer.Tests/SolutionSanityTests.cs`:
 
