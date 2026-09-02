@@ -56,6 +56,48 @@ namespace BitDoFixer
         public string LogBatteryLevel(string name, int level) => IsEnglish ? $"{name} Battery: {level}%" : $"{name} Pil: %{level}";
         public string LogBatteryScanError(string ex) => IsEnglish ? $"[BLE Scan Error]: {ex}" : $"[BLE Tarama Hatası]: {ex}";
 
+        // --- Multi-mando (plan supervisor) ---
+        // NOTA: las traducciones al turco necesitan revision de un hablante nativo.
+        public string ControllersTitle => IsEnglish ? "CONTROLLERS" : "KUMANDALAR";
+        public string SearchingControllers => IsEnglish ? "Searching for 8BitDo controllers…" : "8BitDo kumandaları aranıyor…";
+        public string StateConnecting => IsEnglish ? "Connecting…" : "Bağlanıyor…";
+        public string StateMapped => IsEnglish ? "Mapped" : "Eşlendi";
+        public string StateLost => IsEnglish ? "Lost" : "Bağlantı Koptu";
+        public string ServiceStopped => IsEnglish ? "Service stopped" : "Servis durduruldu";
+        public string RumbleOn => IsEnglish ? "Rumble" : "Titreşim";
+        public string RumbleOff => IsEnglish ? "No rumble" : "Titreşim yok";
+        public string PlayerLabel(int index) => index <= 0
+            ? (IsEnglish ? "No slot" : "Yuva yok")
+            : (IsEnglish ? $"Player {index}" : $"Oyuncu {index}");
+
+        public string DriverMissingTitle => IsEnglish ? "ViGEmBus not installed" : "ViGEmBus kurulu değil";
+        public string DriverMissingHint => IsEnglish
+            ? "Install the ViGEmBus driver, then the app reconnects on its own."
+            : "ViGEmBus sürücüsünü kurun, uygulama kendiliğinden yeniden bağlanır.";
+
+        // Log del supervisor
+        public string LogSupervisorStarted => IsEnglish ? "Supervisor started. Watching for controllers." : "Süpervizör başlatıldı. Kumandalar izleniyor.";
+        public string LogDeviceFound(string name, int player) => IsEnglish
+            ? $"Found '{name}' → player {player}"
+            : $"'{name}' bulundu → oyuncu {player}";
+        public string LogDeviceMapped(string name) => IsEnglish ? $"'{name}' mapped and ready." : $"'{name}' eşlendi ve hazır.";
+        // TODO Tarea 8: reemplazar el 15 literal por Services.ControllerSupervisor.VirtualPadGraceSeconds
+        public string LogDeviceLost(string name) => IsEnglish
+            ? $"'{name}' lost. Holding its virtual pad for 15s."
+            : $"'{name}' bağlantısı koptu. Sanal pad 15s tutuluyor.";
+        public string LogDeviceReleased(string name) => IsEnglish
+            ? $"'{name}' did not come back; virtual pad released."
+            : $"'{name}' geri dönmedi; sanal pad bırakıldı.";
+        public string LogWorkerRetry(string name, int seconds) => IsEnglish
+            ? $"'{name}' failed; retrying in {seconds}s."
+            : $"'{name}' başarısız; {seconds}s içinde yeniden denenecek.";
+        public string LogDriverMissing(string detail) => IsEnglish
+            ? $"ViGEmBus driver unavailable ({detail}). Retrying every 60s."
+            : $"ViGEmBus sürücüsü kullanılamıyor ({detail}). Her 60s tekrar denenecek.";
+        public string LogNoSlotsLeft(string name) => IsEnglish
+            ? $"'{name}' mapped without an XInput slot: all 4 are taken."
+            : $"'{name}' XInput yuvası olmadan eşlendi: 4 yuvanın tamamı dolu.";
+
         public event PropertyChangedEventHandler? PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string? name = null)
         {
