@@ -418,7 +418,9 @@ hardware instead of assumed."
 
 **Este es un refactor de extracción, no un cambio de comportamiento.** Los tests fijan lo que el código hace hoy, incluidas sus rarezas. Si un test parece describir algo raro (los diagonales en los bordes del POV, por ejemplo), es porque el código actual hace eso y lo queremos preservar.
 
-- [ ] **Step 1: Escribir los tests que fallan**
+**HECHO 2026-09-02 (escrito). Pendiente: Steps 2, 4 y 6, que se corren en Windows.**
+
+- [x] **Step 1: Escribir los tests que fallan**
 
 `tests/8bitdofixer.Tests/Xbox360MappingTests.cs`:
 
@@ -574,7 +576,7 @@ dotnet test 8bitdofixer.sln
 
 Expected: FAIL en compilación — `CS0246: The type or namespace name 'Xbox360Mapping' could not be found`. Esa es la falla correcta en este punto.
 
-- [ ] **Step 3: Escribir la implementación**
+- [x] **Step 3: Escribir la implementación**
 
 `Services/Xbox360Mapping.cs`:
 
@@ -652,7 +654,7 @@ dotnet test 8bitdofixer.sln --filter FullyQualifiedName~Xbox360MappingTests
 
 Expected: PASS, 35 tests.
 
-- [ ] **Step 5: Borrar los helpers viejos de `BluetoothRemapper.cs`**
+- [x] **Step 5: Borrar los helpers viejos de `BluetoothRemapper.cs`**
 
 Eliminar de `BluetoothRemapper.cs` los métodos privados `GetBtn`, `NormalizeAxis`, `ApplyDeadzone`, `NegateAxis`, `ToTrigger` (sin uso) y `ApplyDpad`, más la constante `Deadzone`, y hacer que el poll loop use `Xbox360Mapping`. Agregar `using BitDoFixer.Services;` arriba. En el loop, reemplazar la llamada a `ApplyDpad(controller, state.PointOfViewControllers)` por:
 
@@ -676,7 +678,7 @@ dotnet run --project 8bitdofixer.csproj
 
 Expected: todo verde, y con un mando conectado el remapeo sigue funcionando igual que antes — ejes, deadzone y D-pad incluidos. **Esta prueba manual es el punto del refactor de extracción:** si el D-pad cambió de comportamiento, la extracción introdujo un bug.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add Services/Xbox360Mapping.cs tests/8bitdofixer.Tests/Xbox360MappingTests.cs BluetoothRemapper.cs
@@ -989,7 +991,9 @@ binding (`Xbox360Mapping`, `DeviceFilter`, `DeviceDescriptor`, `IControllerSink`
 
 **Nota sobre `StatusText`:** las entries exponen texto ya localizado en vez de que el XAML haga `switch` sobre el enum. Eso mantiene la UI declarativa y deja todo el idioma en `Localization.cs`, como el resto del proyecto. El precio es que un cambio de idioma tiene que refrescar las entries — se resuelve en la Tarea 11.
 
-- [ ] **Step 1: Escribir el test que falla**
+**HECHO 2026-09-02 (escrito). Pendiente: Steps 2 y 6, que se corren en Windows.**
+
+- [x] **Step 1: Escribir el test que falla**
 
 `tests/8bitdofixer.Tests/ControllerEntryTests.cs`:
 
@@ -1090,7 +1094,7 @@ dotnet test 8bitdofixer.sln --filter FullyQualifiedName~ControllerEntryTests
 
 Expected: FAIL en compilación — `CS0246` por `ControllerEntry`, `ControllerState`, `BatteryEntry`.
 
-- [ ] **Step 3: Escribir los enums**
+- [x] **Step 3: Escribir los enums**
 
 `Models/ControllerState.cs`:
 
@@ -1132,7 +1136,7 @@ public enum ServiceState
 }
 ```
 
-- [ ] **Step 4: Escribir `ControllerEntry` y `BatteryEntry`**
+- [x] **Step 4: Escribir `ControllerEntry` y `BatteryEntry`**
 
 `Models/ControllerEntry.cs`:
 
@@ -1266,7 +1270,7 @@ public sealed class BatteryEntry : INotifyPropertyChanged
 }
 ```
 
-- [ ] **Step 5: Agregar los strings a `Localization.cs`**
+- [x] **Step 5: Agregar los strings a `Localization.cs`**
 
 Insertar antes de la línea `public event PropertyChangedEventHandler? PropertyChanged;`:
 
@@ -1323,7 +1327,7 @@ dotnet test 8bitdofixer.sln --filter FullyQualifiedName~ControllerEntryTests
 
 Expected: PASS, 7 tests.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add Models/ tests/8bitdofixer.Tests/ControllerEntryTests.cs Localization.cs
