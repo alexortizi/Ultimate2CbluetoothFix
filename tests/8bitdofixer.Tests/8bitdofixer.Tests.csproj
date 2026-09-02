@@ -1,6 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
+    <!-- net10.0 y no net10.0-windows: un testhost de net10.0-windows exige el
+         runtime Microsoft.WindowsDesktop.App, que no existe fuera de Windows.
+         Apuntando a Core estos tests corren en macOS, Linux y Windows. -->
+    <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
@@ -14,6 +17,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\8bitdofixer.csproj" />
+    <ProjectReference Include="..\..\core\8bitdofixer.Core\8bitdofixer.Core.csproj" />
   </ItemGroup>
 </Project>

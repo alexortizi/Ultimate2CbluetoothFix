@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <!-- net10.0 sin sufijo de plataforma: este assembly no toca WPF, WinRT ni COM,
+         asi que compila y CORRE en cualquier OS. Es lo que permite testear el mapeo
+         y los modelos sin una maquina Windows. -->
+    <TargetFramework>net10.0</TargetFramework>
+    <AssemblyName>8bitdofixer.Core</AssemblyName>
+    <RootNamespace>BitDoFixer</RootNamespace>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+      <_Parameter1>8bitdofixer.Tests</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
+</Project>

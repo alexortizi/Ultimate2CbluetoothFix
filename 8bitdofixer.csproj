@@ -9,6 +9,12 @@
     <Nullable>enable</Nullable>
     <ApplicationIcon>Assets\logo.ico</ApplicationIcon>
     <Version>0.1.0</Version>
+
+    <!-- Permite restaurar y compilar un proyecto que apunta a Windows desde macOS o
+         Linux. En Windows es un no-op. Sin esto, el build fuera de Windows falla con
+         NETSDK1100. La app sigue sin poder EJECUTARSE fuera de Windows: ViGEm es un
+         driver de kernel y DirectInput es COM. -->
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
   </PropertyGroup>
 
   <!-- Solo al publicar: un build normal no es self-contained, para que el proyecto
@@ -21,9 +27,17 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
-      <_Parameter1>8bitdofixer.Tests</_Parameter1>
-    </AssemblyAttribute>
+    <ProjectReference Include="core\8bitdofixer.Core\8bitdofixer.Core.csproj" />
+  </ItemGroup>
+
+  <!-- El csproj vive en la raiz del repo, asi que el glob por defecto **/*.cs se
+       traga los fuentes del proyecto de tests. Sin esta exclusion, la app intenta
+       compilar los tests (y el markup compiler de WPF tambien). -->
+  <ItemGroup>
+    <Compile Remove="tests/**;core/**" />
+    <None Remove="tests/**;core/**" />
+    <Page Remove="tests/**;core/**" />
+    <ApplicationDefinition Remove="tests/**;core/**" />
   </ItemGroup>
 
   <ItemGroup>

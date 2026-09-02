@@ -1,14 +1,17 @@
 namespace BitDoFixer.Services;
 
 /// <summary>Estado del D-pad derivado del hat switch. Inmutable y comparable.</summary>
-internal readonly record struct DpadState(bool Up, bool Right, bool Down, bool Left);
+public readonly record struct DpadState(bool Up, bool Right, bool Down, bool Left);
 
 /// <summary>
 /// Traducción pura DirectInput -> Xbox360. Sin estado, sin COM, sin hardware:
 /// es la única parte del mapeo que se puede testear sin un mando enchufado.
 /// Extraído de BluetoothRemapper sin cambios de comportamiento.
+///
+/// public y no internal: vive en 8bitdofixer.Core, un assembly distinto del que lo
+/// consume. En una librería, lo que se consume desde afuera va público.
 /// </summary>
-internal static class Xbox360Mapping
+public static class Xbox360Mapping
 {
     public const int Deadzone = 4000;
 
