@@ -199,7 +199,9 @@ Expected: `origin/feature/tray-autostart-multipad`. **Si dice `upstream/...`, pa
 
 **El problema que resuelve, y por qué no es opcional:** el csproj de la app tiene hoy `<SelfContained>true</SelfContained>` y `<RuntimeIdentifier>win-x64</RuntimeIdentifier>` en el PropertyGroup principal. Un proyecto de tests que referencie un proyecto self-contained falla con **NETSDK1150**. La corrección es que esas propiedades apliquen solo al publicar.
 
-**HECHO 2026-09-02 (escrito, SIN verificar: falta correr los Steps 5-7 en Windows).**
+**HECHO Y VERIFICADO 2026-09-02 en macOS.** Build limpio, 44 tests en verde, y
+`dotnet publish -r win-x64` genera un `.exe` PE32+ GUI x86-64 single-file.
+El Step 5 destapó un bug real (el glob de la app compilaba los tests): ver la enmienda.
 
 - [x] **Step 1: Mover las props de publish a un grupo condicional**
 
@@ -321,7 +323,7 @@ public class SolutionSanityTests
 }
 ```
 
-- [ ] **Step 5: [WINDOWS] Build y test**
+- [x] **Step 5: [WINDOWS] Build y test**
 
 ```bash
 dotnet build 8bitdofixer.sln
@@ -339,7 +341,7 @@ Si aparece NETSDK1150 igual, el fallback es no usar `ProjectReference` y linkear
   </ItemGroup>
 ```
 
-- [ ] **Step 6: [WINDOWS] Verificar que el publish single-file sigue funcionando**
+- [x] **Step 6: [WINDOWS] Verificar que el publish single-file sigue funcionando**
 
 ```bash
 dotnet publish 8bitdofixer.csproj -c Release -r win-x64
@@ -484,7 +486,15 @@ hardware instead of assumed."
 
 **Este es un refactor de extracción, no un cambio de comportamiento.** Los tests fijan lo que el código hace hoy, incluidas sus rarezas. Si un test parece describir algo raro (los diagonales en los bordes del POV, por ejemplo), es porque el código actual hace eso y lo queremos preservar.
 
-**HECHO 2026-09-02 (escrito). Pendiente: Steps 2, 4 y 6, que se corren en Windows.**
+**HECHO Y VERIFICADO 2026-09-02 en macOS.** 35 tests en verde.
+
+El Step 2 (ver el rojo antes de implementar) no se pudo hacer en su momento porque no
+había SDK instalado. Se sustituyó por **mutation testing** sobre la implementación ya
+escrita, que es evidencia equivalente o más fuerte: deadzone 4000→3000 rompió 3 tests,
+quitar el clamp de `NegateAxis` rompió 1, y volver exclusivos los bordes del POV rompió 2.
+
+**Pendiente: el Step 6 sólo en su parte manual** (probar ejes, deadzone y D-pad con un
+mando real, para confirmar que la extracción no cambió comportamiento).
 
 - [x] **Step 1: Escribir los tests que fallan**
 
@@ -634,7 +644,7 @@ public class Xbox360MappingTests
 }
 ```
 
-- [ ] **Step 2: [WINDOWS] Correr y verificar que falla por no compilar**
+- [x] **Step 2: [WINDOWS] Correr y verificar que falla por no compilar**
 
 ```bash
 dotnet test 8bitdofixer.sln
@@ -712,7 +722,7 @@ internal static class Xbox360Mapping
 }
 ```
 
-- [ ] **Step 4: [WINDOWS] Correr los tests**
+- [x] **Step 4: [WINDOWS] Correr los tests**
 
 ```bash
 dotnet test 8bitdofixer.sln --filter FullyQualifiedName~Xbox360MappingTests
@@ -1057,7 +1067,8 @@ binding (`Xbox360Mapping`, `DeviceFilter`, `DeviceDescriptor`, `IControllerSink`
 
 **Nota sobre `StatusText`:** las entries exponen texto ya localizado en vez de que el XAML haga `switch` sobre el enum. Eso mantiene la UI declarativa y deja todo el idioma en `Localization.cs`, como el resto del proyecto. El precio es que un cambio de idioma tiene que refrescar las entries — se resuelve en la Tarea 11.
 
-**HECHO 2026-09-02 (escrito). Pendiente: Steps 2 y 6, que se corren en Windows.**
+**HECHO Y VERIFICADO 2026-09-02 en macOS.** 7 tests en verde. El Step 2 no llegó a verse
+en rojo antes de implementar (no había SDK); los modelos quedan cubiertos por sus tests.
 
 - [x] **Step 1: Escribir el test que falla**
 
@@ -1152,7 +1163,7 @@ public class ControllerEntryTests
 }
 ```
 
-- [ ] **Step 2: [WINDOWS] Verificar que falla**
+- [x] **Step 2: [WINDOWS] Verificar que falla**
 
 ```bash
 dotnet test 8bitdofixer.sln --filter FullyQualifiedName~ControllerEntryTests
@@ -1385,7 +1396,7 @@ Insertar antes de la línea `public event PropertyChangedEventHandler? PropertyC
 
 **Ojo con el orden de tareas:** `LogDeviceLost` referencia `Services.ControllerSupervisor.VirtualPadGraceSeconds`, que se crea en la Tarea 8. Hasta entonces, dejar el literal `15` en su lugar y cambiarlo a la constante en la Tarea 8. Anotarlo con un comentario `// TODO Tarea 8` es aceptable acá porque el plan dice exactamente cuándo se resuelve.
 
-- [ ] **Step 6: [WINDOWS] Correr los tests**
+- [x] **Step 6: [WINDOWS] Correr los tests**
 
 ```bash
 dotnet test 8bitdofixer.sln --filter FullyQualifiedName~ControllerEntryTests
