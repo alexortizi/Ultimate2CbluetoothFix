@@ -28,6 +28,76 @@
 
 ---
 
+---
+
+## Enmienda 2026-09-02: tres proyectos y verificación local
+
+Al instalar el SDK de .NET 10 en la máquina de desarrollo (macOS) se descubrió que
+**sí se puede compilar y testear localmente**, con dos cambios. Esta enmienda pisa lo
+que dicen las Global Constraints y las tareas sobre `[WINDOWS]`.
+
+**1. `EnableWindowsTargeting=true`** en `8bitdofixer.csproj` permite restaurar y
+compilar un proyecto que apunta a Windows desde macOS o Linux (no-op en Windows). Sin
+esto el build falla con NETSDK1100.
+
+**2. Un tercer proyecto, `core/8bitdofixer.Core/` (TFM `net10.0`, sin sufijo de
+plataforma).** Un testhost de `net10.0-windows` exige el runtime
+`Microsoft.WindowsDesktop.App`, que no existe fuera de Windows, así que los tests eran
+inejecutables sin una máquina Windows. Moviendo el código puro a un assembly neutral,
+el proyecto de tests apunta a `net10.0` y corre en cualquier OS.
+
+### Qué vive en cada proyecto
+
+| Proyecto | TFM | Contenido |
+|---|---|---|
+| `core/8bitdofixer.Core` | `net10.0` | `Localization`, `Models/*`, `Xbox360Mapping`, y **todo lo que se pueda testear**: `DeviceDescriptor`, `DeviceFilter` (Tarea 5) |
+| `8bitdofixer` (raíz) | `net10.0-windows10.0.19041.0` | WPF, WinRT y COM: `ControllerWorker`, `ControllerSupervisor`, `ControllerService`, `BatteryService`, `BluetoothRemapper`, ventanas |
+| `tests/8bitdofixer.Tests` | `net10.0` | Referencia **solo** a Core. Corre en macOS, Linux y Windows |
+
+Los namespaces no cambian (`BitDoFixer`, `BitDoFixer.Models`, `BitDoFixer.Services`):
+un namespace puede abarcar varios assemblies, así que no hubo churn de `using`.
+
+### Cambios concretos a las tareas
+
+*(La numeración de tareas de esta lista es la del plan del supervisor; para este plan, lo que aplica es la tabla de arriba y los puntos de abajo.)*
+
+**En este plan:** `AppPaths`, `CrashLogger`, `AppSettings` y `SettingsStore` van en **Core**, así que sus tests corren localmente. `StartupRegistration` se queda en la app porque toca el registro, pero sus dos funciones puras (`BuildRunCommand`, `IsDisabledBlob`) van en Core y se testean localmente; los tests de ida y vuelta contra HKCU siguen siendo de Windows. `SingleInstanceGuard` se queda en la app: `EventWaitHandle` con nombre tira `PlatformNotSupportedException` fuera de Windows.
+
+- **Tarea 2 del plan del supervisor:** el csproj de la app vive en la raíz del repo, así que su glob por defecto
+  `**/*.cs` estaba compilando los fuentes de los tests dentro de la app (y pasándolos al
+  markup compiler de WPF). Hace falta `<Compile Remove="tests/**;core/**" />` y lo mismo
+  para `None`, `Page` y `ApplicationDefinition`. **Este bug se habría manifestado igual
+  en Windows.** El `InternalsVisibleTo` se muda al csproj de Core.
+- **Tarea 4:** `Xbox360Mapping` y `DpadState` son `public`, no `internal`: ahora viven en
+  otro assembly que su consumidor.
+- **Tarea 5:** `DeviceDescriptor` y `DeviceFilter` van en **Core** y son `public`. Sus
+  tests corren localmente; ya no dependen de Windows.
+- **Tarea 6:** los modelos y `Localization` van en Core. Como `Localization` cambió de
+  assembly, `MainWindow.xaml` necesita
+  `xmlns:local="clr-namespace:BitDoFixer;assembly=8bitdofixer.Core"`.
+- **Tarea 9:** `ControllerService` se queda en la app (usa el `Dispatcher` de WPF), pero
+  **`ComputeState` se mueve a Core** como tipo propio y puro, para que
+  `ControllerServiceStateTests` corra localmente.
+
+### Qué sigue necesitando Windows
+
+Solo lo que toca hardware o el sistema:
+
+- **Tarea 3** (medición de VID/PID) — necesita los mandos.
+- **Tarea 11 Step 4** (checklist manual) — necesita mandos y ViGEmBus.
+- Ejecutar la app: ViGEm es un driver de kernel y DirectInput es COM.
+
+Los pasos de `dotnet build` / `dotnet test` **ya no requieren Windows**. Donde una tarea
+diga `[WINDOWS]` para build o test, se corre localmente.
+
+### Setup local
+
+`brew install dotnet` (10.0.400 en la máquina de desarrollo). No hace falta exportar
+`DOTNET_ROOT`. Verificado el 2026-09-02: 3 proyectos compilan sin warnings, 44 tests en
+verde, y `dotnet publish -c Release -r win-x64` produce un `.exe` PE32+ GUI x86-64
+single-file de 169 MB desde macOS.
+
+
 ## Estructura de archivos
 
 | Archivo | Responsabilidad | Tarea |
